@@ -1,0 +1,25 @@
+{# Load the tag library #} {% load bootstrap5 %}
+<!-- prettier-ignore -->
+{# Load CSS and JavaScript #}
+{% bootstrap_css %}
+{% bootstrap_javascript %}
+<!-- prettier-ignore -->
+{# Display django.contrib.messages as Bootstrap alerts #}
+{% bootstrap_messages %}
+<!-- prettier-ignore -->
+{# Display a form #}
+<div class="container mt-3">
+  <div class="text-center">
+    <h1>Cattle Disease Prediction</h1>
+  </div>
+  <form action="" method="post" class="form" enctype="multipart/form-data">
+    <!-- prettier-ignore -->
+    {% csrf_token %}
+  {% bootstrap_form form %}
+  {% buttons %}
+    <button type="submit" class="btn btn-primary">Submit</button>
+    {% endbuttons %}
+  </form>
+</div>
+<!-- prettier-ignore -->
+{# Read the documentation for more information #}
