@@ -1,3 +1,5 @@
 from django.contrib import admin
+from diseases.models import CattleImageAndDiseaseDescription
 
-# Register your models here.
+
+admin.site.register(CattleImageAndDiseaseDescription)
