@@ -28,6 +28,9 @@ class CattleDiseaseImage(models.Model):
         CattleDiseaseDescription, on_delete=models.CASCADE, blank=True, null=True)
     cattle_image = models.ImageField(upload_to="images/")
 
+    def __str__(self):
+        return str(self.id)
+
 
 class CattleImageAndDiseaseDescription(models.Model):
     user_phone = models.CharField(max_length=255, blank=True, null=True)
@@ -43,4 +46,4 @@ class CattleImageAndDiseaseDescription(models.Model):
     approved = models.BooleanField(default=False)
 
     def __str__(self):
-        return self.user_phone
+        return str(self.id)
