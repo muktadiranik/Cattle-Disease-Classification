@@ -66,33 +66,43 @@ class IndexView(View):
 class IndexAPIView(APIView):
     def post(self, request):
         with atomic():
+            user_phone = request.data.get("user_phone")
+            description = request.data.get("description")
+            doctor_advice = request.data.get("doctor_advice")
+            diagonosis = request.data.get("diagonosis")
+            treatment = request.data.get("treatment")
+            disease_id = request.data.get("disease")
+
+            disease = CattleDisease.objects.get(id=disease_id)
+
             cattle_disease_description = CattleDiseaseDescription.objects.create(
-                user_phone=request.data.get("user_phone"),
-                description=request.data.get("description"),
-                doctor_advice=request.data.get("doctor_advice"),
-                diagonosis=request.data.get("diagonosis"),
-                treatment=request.data.get("treatment"),
-                disease=CattleDisease.objects.get(
-                    id=request.data.get("disease")),
+                user_phone=user_phone,
+                description=description,
+                doctor_advice=doctor_advice,
+                diagonosis=diagonosis,
+                treatment=treatment,
+                disease=disease,
                 approved=False
             )
 
-            for i in request.FILES.getlist("images"):
-                count = CattleDiseaseImage.objects.all().count()
+            for i, image in enumerate(request.data.getlist("images"), start=1):
+                count = CattleDiseaseImage.objects.filter(
+                    cattle_disease_description__disease=disease).count()
 
-                for j in CattleDiseaseImage.objects.all():
-                    if compare_images(i, j.cattle_image):
+                for existing_image in CattleDiseaseImage.objects.filter(cattle_disease_description__disease=disease):
+                    if compare_images(image, existing_image.cattle_image):
                         return Response({"data": "Image matches an existing image"}, status=status.HTTP_400_BAD_REQUEST)
 
+                custom_image_name = f"{disease.code_name}_{count + 1}.png"
                 custom_image = default_storage.save(
-                    f"images/{cattle_disease_description.disease.code_name}_{count + 1}.png", i)
+                    f"images/{custom_image_name}", image)
 
                 CattleDiseaseImage.objects.create(
                     cattle_disease_description=cattle_disease_description,
                     cattle_image=custom_image
                 )
 
-            return Response({"data": "Image successfully saved"}, status=status.HTTP_201_CREATED)
+            return Response({"data": "Images successfully saved"}, status=status.HTTP_201_CREATED)
 
 
 class DiseaseAPIView(APIView):
